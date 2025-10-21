@@ -1,0 +1,25 @@
+Topics
+-Public and Private Blockchain
+-How Blockchain transactions work
+-Joining the network
+-Proof of Work and Proof of State
+-Smart Contracts
+-Public Permissionless Blockchain
+-Distributed Application or Distributed Ledger
+-KYC(Know Your Customer) & AML(Anti Money Laundering)
+-Blockchain Client
+
+
+
+
+
+
+Hyperledger
+-It is an open source permission based distributed ledger technology(DLT)
+-Basic Architecture of Hyperledger
+        =>
+
+
+
+Blockchain Basics
+-

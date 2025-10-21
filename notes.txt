@@ -1,0 +1,28 @@
+// URL points to your running User Service WebSocket endpoint
+const ws = new WebSocket('ws://localhost:8080/ws/users');
+
+// Event fired when connection is established
+ws.onopen = () => { 
+  console.log('Connected to WebSocket server!');
+};
+
+// Event fired when a message is received from the server
+ 
+ws.addEventListener('message', event => {
+  console.log('Message from server ', event.data);
+  ws.send(JSON.stringify({ type: 'greeting', msg: 'Hello from client!' }));
+});
+// ws.onmessage = event => {
+//   const data = JSON.parse(event.data);
+//   console.log('Message from server:', data);
+// };
+
+// Event fired if the connection closes
+ws.onclose = () => {
+  console.log('Disconnected from WebSocket server');
+};
+
+// Event fired if there is an error
+ws.onerror = err => {
+  console.error('WebSocket error:', err);
+};

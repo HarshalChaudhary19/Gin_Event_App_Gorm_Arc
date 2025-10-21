@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package userpb;
+
+// Make sure go_package matches how you will import it in your Go code.
+option go_package = "Gin_Project_Bill_Service/proto/userpb";
+
+service UserService {
+  // server-side RPC to get user by id
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+}
+
+message GetUserRequest {
+  int32 id = 1;
+}
+
+message GetUserResponse {
+  int32 id    = 1;
+  string email = 2;
+  string name  = 3;
+}
