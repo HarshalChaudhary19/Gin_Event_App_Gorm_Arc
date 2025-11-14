@@ -1,2 +1,8 @@
 .env
 private.pem
+public.pem
+temp.go
+fabric/crypto/
+fabric/ca-cert.pem
+fabric/ca.crt 
+fabric/connection-org1.yaml
