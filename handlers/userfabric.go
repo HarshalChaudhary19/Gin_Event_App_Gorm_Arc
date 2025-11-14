@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Gin_Event_App_Arc/fabric"
+	"Gin_Event_App_Arc/models"
 	"Gin_Event_App_Arc/response"
 	"fmt"
 	"net/http"
@@ -94,4 +95,28 @@ func (handler *HandlerStruct) GetFullHistory(c *gin.Context) {
 func (handler *HandlerStruct) InitLedger(c *gin.Context) {
 	result := handler.UserFabricHandler.InitLedgerService()
 	response.Response(c, http.StatusOK, result)
+}
+
+func (handler *HandlerStruct) RegisterUserFabric(c *gin.Context) {
+	var userSentFabric models.UserSentFabric
+
+	if err := c.ShouldBindJSON(&userSentFabric); err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	result, err := handler.UserFabricHandler.RegisterUser(&userSentFabric)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Response(c, http.StatusOK, result)
+}
+
+func (handler *HandlerStruct) GetAllRegisteredUsers(c *gin.Context) {
+	result, err := handler.UserFabricHandler.GetAllRegisteredUsersfromFabric()
+	if err != nil {
+		response.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.SuccessResponse(c, result)
 }

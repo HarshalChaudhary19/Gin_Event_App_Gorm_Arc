@@ -1,0 +1,28 @@
+    ==GraphQL==
+---Query language for reading and mutating data in API's---
+
+There are two problems with basic REST API's 
+1.underFETCHING--where we may need data over multiple requests
+2.OVERfetching--where we may not need all the data from the request but request is providing with all the data
+
+Unlike traditional REST API's.....graphql has a single entry point which is usually /graphql
+we do this by describing the struct of what format of data do we need from the call using 
+_____>  query getRockets{}     And this is for Client request and the server resolves the Issue
+
+_____> We can define schema using type keyword in the file .gql
+
+In this ! means required
+and we can tie them together just like in go structs
+
+-->Query<--
+Every graphql configuration has (type Query) which is the main entry point for the consumer of the API
+this (type Query) is how we read data and we can also add filters in it
+
+
+-->Mutaions<--      To Update Data
+If we want to mutate data we can use (type Mutation) that defines how the data can be modified on an API then we can write code
+basically resolvers to resolve this data in any programming language
+
+
+--->InSights<---
+---We can use Graphql Sandbox just like postman for our Backend GraphQL setup and test the queries that provide data from the server

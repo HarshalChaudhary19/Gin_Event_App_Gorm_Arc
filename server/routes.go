@@ -2,11 +2,15 @@ package server
 
 import (
 	"Gin_Event_App_Arc/fabric"
+	"Gin_Event_App_Arc/graph"
 	"Gin_Event_App_Arc/handlers"
 	"Gin_Event_App_Arc/middlewares"
 	"Gin_Event_App_Arc/repositories"
 	"Gin_Event_App_Arc/services"
 	"net/http"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -20,6 +24,8 @@ func (server *Server) Routes() http.Handler {
 	attendeeRepo := repositories.InitAttendeeRepo(server.DB)
 	roleRepo := repositories.InitRoleRepo(server.DB)
 	userroleRepo := repositories.InitUserRoleRepo(server.DB)
+	userfabricrepo := repositories.InitUserFabricRepo(server.DB)
+	fileuploadRepo := repositories.InitFileRepo(server.DB)
 
 	//Initiallizing Services
 	userService := services.NewUserService(userRepo, userroleRepo)
@@ -27,6 +33,7 @@ func (server *Server) Routes() http.Handler {
 	attendeeService := services.NewAttendeeService(attendeeRepo)
 	roleService := services.NewRoleService(roleRepo)
 	userroleService := services.NewUserRoleService(userroleRepo, roleRepo, userRepo)
+	fileUploadService := services.NewFileService(fileuploadRepo)
 
 	//Hyperledger Network Initialize
 	network, gw, err := fabric.Connect()
@@ -35,10 +42,10 @@ func (server *Server) Routes() http.Handler {
 	}
 	logrus.Println("✅ Connected to Hyperledger Fabric successfully")
 	//init userfabricservice
-	userfabricService := services.NewUserFabricService(network, gw, "basic")
+	userfabricService := services.NewUserFabricService(network, gw, "basic", userfabricrepo)
 	//Hyperledger Network Initialize End
 	//Initiallizing Handlers
-	handlerInitialize := handlers.NewHandlerInstance(userService, eventService, attendeeService, roleService, userroleService, server.RedisClient, server.Hub, userfabricService)
+	handlerInitialize := handlers.NewHandlerInstance(userService, eventService, attendeeService, roleService, userroleService, server.RedisClient, server.Hub, userfabricService, fileUploadService)
 	//Registering Web Socket Endpoint for First Handshake
 	g.GET("/ws/users", func(ctx *gin.Context) {
 		server.Hub.ServeWS(ctx)
@@ -99,6 +106,40 @@ func (server *Server) Routes() http.Handler {
 		v1UserFabric.GET("/getfullhistory", handlerInitialize.GetFullHistory)
 		v1UserFabric.DELETE("/deleteuser/:id", handlerInitialize.DeleteUserFabric)
 		v1UserFabric.GET("/allusers", handlerInitialize.GetAllUsersFabric)
+		v1UserFabric.POST("/registeruser", handlerInitialize.RegisterUser)
+		v1UserFabric.POST("/registeruserfabric", handlerInitialize.RegisterUserFabric)
+		v1UserFabric.GET("/allregisterusers", handlerInitialize.GetAllRegisteredUsers)
+	}
+
+	v1FileUpload := g.Group("/files")
+	{
+		v1FileUpload.GET("getById/:id", handlerInitialize.GetFileByID)
+		v1FileUpload.POST("/upload", handlerInitialize.UploadFile)
+		v1FileUpload.DELETE("/delete/:id", handlerInitialize.DeleteFile)
+		v1FileUpload.PUT("/update/:id", handlerInitialize.UpdateFile)
+	}
+
+	//GraphQL Implementation
+	//Initializing the services
+	categoryRepo := repositories.InitGraphRepo(server.DB)
+	courseRepo := repositories.InitGraphRepoCourse(server.DB)
+	graphqlHandler := handler.NewDefaultServer(
+		graph.NewExecutableSchema(
+			graph.Config{Resolvers: &graph.Resolver{
+				CategoryRepo:      categoryRepo,
+				CourseRepo:        courseRepo,
+				FileUploadService: fileUploadService,
+			}},
+		),
+	)
+	v1GraphQL := g.Group("/graph")
+	{
+		v1GraphQL.GET("/playground", func(ctx *gin.Context) {
+			playground.Handler("GraphQL", "/graphql").ServeHTTP(ctx.Writer, ctx.Request)
+		})
+		v1GraphQL.POST("/graphql", func(ctx *gin.Context) {
+			graphqlHandler.ServeHTTP(ctx.Writer, ctx.Request)
+		})
 	}
 	return g
 }

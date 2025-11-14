@@ -12,6 +12,7 @@ import (
 
 func InitDB(cfg config.DBConfig) *gorm.DB {
 	// postgres dns
+	fmt.Println("InitDB running")
 	dataSourceName := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		cfg.Host,
 		cfg.User,
@@ -31,10 +32,15 @@ func InitDB(cfg config.DBConfig) *gorm.DB {
 
 func migration(t *gorm.DB) {
 	err := t.AutoMigrate(&models.User{})
+	err = t.AutoMigrate(&models.FabricUser{})
 	err = t.AutoMigrate(&models.Event{})
 	err = t.AutoMigrate(&models.Attendees{})
 	err = t.AutoMigrate(&models.Role{})
 	err = t.AutoMigrate(&models.UserRole{})
+	err = t.AutoMigrate(&models.CategoryGraph{})
+	err = t.AutoMigrate(&models.CourseGraph{})
+	err = t.AutoMigrate(&models.FileUpload{})
+	fmt.Println("Migration func running")
 	if err != nil {
 		log.Fatal("table is not migrated")
 	}

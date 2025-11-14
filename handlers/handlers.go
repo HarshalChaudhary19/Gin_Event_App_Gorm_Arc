@@ -30,9 +30,10 @@ type HandlerStruct struct {
 	Cache             *config.RedisClient
 	Hub               *ws.Hub
 	UserFabricHandler services.UserFabricServiceI
+	FileUploadHandler services.FileServiceI
 }
 
-func NewHandlerInstance(userHandler services.UserServiceI, eventHandler services.EventServiceI, attendeeHandler services.AttendeeServiceI, roleHandler services.RoleServiceI, userroleHandler services.UserRoleServiceI, cache *config.RedisClient, hub *ws.Hub, userFabricHandler services.UserFabricServiceI) *HandlerStruct {
+func NewHandlerInstance(userHandler services.UserServiceI, eventHandler services.EventServiceI, attendeeHandler services.AttendeeServiceI, roleHandler services.RoleServiceI, userroleHandler services.UserRoleServiceI, cache *config.RedisClient, hub *ws.Hub, userFabricHandler services.UserFabricServiceI, fileUploadHandler services.FileServiceI) *HandlerStruct {
 	return &HandlerStruct{
 		UserHandler:       userHandler,
 		EventHandler:      eventHandler,
@@ -42,6 +43,7 @@ func NewHandlerInstance(userHandler services.UserServiceI, eventHandler services
 		Cache:             cache,
 		Hub:               hub,
 		UserFabricHandler: userFabricHandler,
+		FileUploadHandler: fileUploadHandler,
 	}
 }
 
@@ -63,7 +65,6 @@ func (handler *HandlerStruct) CreateEvents(c *gin.Context) {
 		return
 	}
 	response.Response(c, http.StatusCreated, event)
-
 }
 
 // Get Event By ID Controller

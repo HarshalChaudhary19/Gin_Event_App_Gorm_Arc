@@ -74,6 +74,7 @@ func Connect() (*client.Network, *client.Gateway, error) { //Fabric channel and 
 // newIdentity loads an X.509 certificate and creates a Fabric identity
 func newIdentity(certPath string, mspID string) (*identity.X509Identity, error) {
 	certPEM, err := os.ReadFile(certPath)
+	fmt.Println("Reading fileKKKKKKKKKKKK", string(certPEM))
 	if err != nil {
 		return nil, fmt.Errorf("failed to read certificate file: %v", err)
 	}
@@ -91,6 +92,7 @@ func newIdentity(certPath string, mspID string) (*identity.X509Identity, error) 
 // newSign creates a signing function from a PEM-encoded private key
 func newSign(keyPath string) (identity.Sign, error) {
 	keyPEM, err := os.ReadFile(keyPath)
+	fmt.Println("reading keyPEM", string(keyPEM))
 	if err != nil {
 		return nil, fmt.Errorf("failed to read private key file: %v", err)
 	}
@@ -101,6 +103,7 @@ func newSign(keyPath string) (identity.Sign, error) {
 	}
 
 	sign, err := identity.NewPrivateKeySign(privateKey)
+	fmt.Println("Reading sign", sign)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create signer: %v", err)
 	}

@@ -1,0 +1,55 @@
+==>Basically use these commands to setup<==
+
+-->go get  github.com/99designs/gqlgen<--
+-->go install github.com/99designs/gqlgen@latest<--
+-->gqlgen init<--
+
+Then the files/folders like graph will be created and a server file(totally optional...meaning embed the graph from your own main.go file instead of using this one)
+
+-->Then use the server.go file and kinda implement what is in the main.go and server file
+-->gqlgen.yml file is the configuration file that contains the specification and path of several key resources related to graphql toolkit
+
+--->Graph Folder<---
+
+1.  schema.graphqls contains the models or type structs/ Objects which are there to be used in the graph
+2.  schema.resolvers.go contains the so-called resolvers--- basically means the service/logic part of the graphql 
+    and they perform actions on the DB 
+3.  resolver.go--- implements the resolver method inside this file 
+4.  graph/model/models_gen.go--- contains the Go struct and types that gqlgen generates and requires
+
+
+Ex: What is possible in the mutation file
+
+type Mutation {
+  createCategory(input: NewCategory!): Category!
+  createCourse(input: NewCourse!): Course!
+  updateCategory(id: ID!, input: NewCategory!): Category!
+  updateCourse(id: ID!, input: NewCourse!): Course!
+  deleteCategory(id: ID!): Boolean!
+  deleteCourse(id: ID!): Boolean!
+}
+
+for example like in this the deleteCategory takes id and then returns Boolean if the deletion is done or not
+In the UpdateCategory we are taking id and the NewCategory instance and returning Category from the function
+
+
+Then we need to implement these methods in the schema.resolver.go file
+
+
+
+--->Then Run these commands<---
+
+go run github.com/99designs/gqlgen generate 
+
+
+---The above command will analyze the code and create the struct for further use in the schema.resolver.go file
+
+
+
+//Then creating the repository layer to interact with the DB 
+---Then using that code and use the methods in the empty file in the graph/resolver.go file basically dependency injection
+---Like we do in the Service layer for other repositories
+---Update the schema.resolver.go file 
+
+
+

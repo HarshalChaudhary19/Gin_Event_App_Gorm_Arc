@@ -1,0 +1,62 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Category{
+  id:ID!
+  name:String!
+  description:String!
+  courses :[Course!]!
+}
+
+type Course{
+  id:ID!
+  name:String!
+  description:String!
+  category:Category!
+}
+
+input NewCategory{
+  name:String!
+  description:String
+}
+
+input NewCourse{
+  name:String!
+  description:String
+  categoryId:ID!
+}
+
+type Query{
+  categories:[Category!]!
+  courses:[Course!]!
+  files: [File!]!
+  file(id: ID!): File
+}
+
+type Mutation{
+  createCategory(input:NewCategory!):Category!
+  createCourse(input:NewCourse!):Course!
+  uploadFile(file: Upload!): File!        # multipart upload
+  updateFile(id: ID!, file: Upload!): File!
+  deleteFile(id: ID!): Boolean!
+}
+
+
+scalar Upload
+
+type File {
+  id: ID!
+  filename: String!
+  contentType: String!
+  size: Int!
+  downloadUrl: String!   # points to your REST GET endpoint
+  # optionally: data: String   # base64 if you want to return bytes (not recommended)
+}
+
+
+
+
+
+
+
